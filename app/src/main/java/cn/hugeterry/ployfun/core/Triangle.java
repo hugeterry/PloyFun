@@ -25,8 +25,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import cn.hugeterry.ployfun.core.ArraySet;
-import cn.hugeterry.ployfun.core.Pnt;
+
 
 /**
  * A Triangle is an immutable Set of exactly three Pnts.
@@ -43,7 +42,7 @@ import cn.hugeterry.ployfun.core.Pnt;
  * Created December 2007. Replaced general simplices with geometric triangle.
  *
  */
-class Triangle extends ArraySet<Pnt> {
+public class Triangle extends ArraySet<Pnt> {
 
     private int idNumber;                   // The id number
     private Pnt circumcenter = null;        // The triangle's circumcenter
