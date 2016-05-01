@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
     public static List<MyPoint> pnts = new ArrayList<MyPoint>();
     public static long time = System.currentTimeMillis();
 
-    private ImageView iv;
+    private ImageView iv, seeit;
+    private Button doit;
     private Canvas canvas;
     private Paint p;
 
@@ -37,8 +39,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         iv = (ImageView) findViewById(R.id.iv);
+        seeit = (ImageView) findViewById(R.id.seeit);
+        doit = (Button) findViewById(R.id.doit);
+        iv.setDrawingCacheEnabled(true);
 
-        setupLowPoly();
+        doit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setupLowPoly();
+            }
+        });
+
     }
 
     private void setupLowPoly() {
@@ -49,11 +60,17 @@ public class MainActivity extends AppCompatActivity {
                 new Pnt(0, PolyfunKey.initialSize));
         dt = new Triangulation(initialTriangle);
         //**************读取图片所在位置******************
-        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        iv.measure(w, h);
-        int height = iv.getMeasuredHeight();
-        int width = iv.getMeasuredWidth();
+//        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.me)
+//                .copy(Bitmap.Config.ARGB_8888, true);
+        Bitmap bmp = iv.getDrawingCache();
+        int height = bmp.getHeight();
+        int width = bmp.getWidth();
+//        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+//        iv.measure(w, h);
+//        int height = iv.getMeasuredHeight();
+//        int width = iv.getMeasuredWidth();
+//        bmp = Bitmap.createScaledBitmap(bmp, bmp_width, bmp_height, true);
         //加入四个端点
         dt.delaunayPlace(new Pnt(1, 1));
         dt.delaunayPlace(new Pnt(1, height - 1));
@@ -61,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         dt.delaunayPlace(new Pnt(width - 1, height - 1));
         //随机加入一些点
         Random random = new Random(System.currentTimeMillis());
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 50; i++) {
             int x = random.nextInt(width);
             int y = random.nextInt(height);
             dt.delaunayPlace(new Pnt(x, y));
@@ -69,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         //***************************
 //        System.out.println(width + "=====" + height);
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.me)
-                .copy(Bitmap.Config.ARGB_8888, true);
+
         Bitmap resultBitmap = ConvertGreyImg.convertGreyImg(bmp);
         if (canvas == null) {
             canvas = new Canvas(bmp);
@@ -125,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         canvas.drawBitmap(bmp, width, height, p);
-        iv.setImageBitmap(bmp);
+        seeit.setImageBitmap(bmp);
         System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
 
     }
