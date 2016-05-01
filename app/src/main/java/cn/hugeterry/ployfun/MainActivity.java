@@ -1,11 +1,10 @@
 package cn.hugeterry.ployfun;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,18 +18,18 @@ import java.util.Random;
 import cn.hugeterry.ployfun.core.Pnt;
 import cn.hugeterry.ployfun.core.Triangulation;
 import cn.hugeterry.ployfun.core.Triangle;
+import cn.hugeterry.ployfun.utils.ConvertGreyImg;
+import cn.hugeterry.ployfun.utils.DrawTriangle;
 
 public class MainActivity extends AppCompatActivity {
-    static int graMax = 30;//边缘检测的阀值控制，值越大，出来的点越少
-    static int pc = 400;//最后绘制的点数量控制
-    static int initialSize = 10000;//包围三角形的大小
-    static Triangulation dt;
-    static List<MyPoint> pnts = new ArrayList<MyPoint>();
-    static long time = System.currentTimeMillis();
 
-    ImageView iv;
-    Canvas canvas;
-    Paint p;
+    public static Triangulation dt;
+    public static List<MyPoint> pnts = new ArrayList<MyPoint>();
+    public static long time = System.currentTimeMillis();
+
+    private ImageView iv;
+    private Canvas canvas;
+    private Paint p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +37,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         iv = (ImageView) findViewById(R.id.iv);
-        iv.setDrawingCacheEnabled(true);
 
-        iv.setImageResource(R.mipmap.ic_launcher);
-        iv.buildDrawingCache();
-
-        setupTriangle();
+        setupLowPoly();
     }
 
-    private void setupTriangle() {
+    private void setupLowPoly() {
         //这是包围三角形的诞生地...
         Triangle initialTriangle = new Triangle(
-                new Pnt(-initialSize, -initialSize),
-                new Pnt(initialSize, -initialSize),
-                new Pnt(0, initialSize));
-        dt = new Triangulation(initialTriangle);
+                new Pnt(-PolyfunKey.initialSize, -PolyfunKey.initialSize),
+                new Pnt(PolyfunKey.initialSize, -PolyfunKey.initialSize),
+                new Pnt(0, PolyfunKey.initialSize));
         dt = new Triangulation(initialTriangle);
         //**************读取图片所在位置******************
         int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -75,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
 
         //***************************
 //        System.out.println(width + "=====" + height);
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.ea)
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.me)
                 .copy(Bitmap.Config.ARGB_8888, true);
-        Bitmap resultBitmap = convertGreyImg(bmp);
+        Bitmap resultBitmap = ConvertGreyImg.convertGreyImg(bmp);
         if (canvas == null) {
             canvas = new Canvas(bmp);
         }
@@ -86,16 +80,14 @@ public class MainActivity extends AppCompatActivity {
             for (int x = 1; x < width - 1; ++x) {
                 int rgb = resultBitmap.getPixel(x, y);
                 rgb = (rgb & 0xff0000) >> 16;//留灰度
-                if (rgb > graMax) {
-                    //dt.delaunayPlace(new Pnt(x,y));//加入三角点
+                if (rgb > PolyfunKey.graMax) {
                     pnts.add(new MyPoint(x, y));
-//					outBinary.setRGB(x, y, 0xffffffff);
                 }
             }
         }
         System.out.println("未过滤点集有" + pnts.size() + "个，正在随机排序");
         Collections.shuffle(pnts);
-        int count = Math.min(pnts.size(), pc);
+        int count = Math.min(pnts.size(), PolyfunKey.pc);
         System.out.println("正在加入点并剖分三角，请耐心等待。。。");
         for (int i = 0; i < count; i++) {
             MyPoint p = pnts.get(i);
@@ -127,72 +119,15 @@ public class MainActivity extends AppCompatActivity {
                     System.out.println(cx + "--" + cy);
                     int rgb = bmp.getPixel(cx, cy);//三角形填充色
                     //绘画图形
-                    p = drawSanJiao(vertices, rgb, canvas, height, width, getResources());
+                    p = DrawTriangle.drawTriangle(vertices, rgb, canvas, height, width, getResources());
                 }
             }
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ea)
-                    .copy(Bitmap.Config.ARGB_8888, true);
-            canvas.drawBitmap(bitmap, width, height, p);
-
-            iv.setImageBitmap(bmp);
-            System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
         }
+
+        canvas.drawBitmap(bmp, width, height, p);
+        iv.setImageBitmap(bmp);
+        System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
 
     }
 
-    public static Paint drawSanJiao(Pnt[] polygon, int fillColor, Canvas canvas, int height, int width, Resources res) {
-        int[] x = new int[polygon.length];
-        int[] y = new int[polygon.length];
-        for (int i = 0; i < polygon.length; i++) {
-            x[i] = (int) polygon[i].coord(0);
-            y[i] = (int) polygon[i].coord(1);
-        }
-        Paint p = new Paint();
-        Path path = new Path();
-        p.setColor(fillColor);
-        System.out.println("fillColorrrrrrrrrrrrrrrrrrrrrr=====" + fillColor);
-        System.out.println(x[0] + "========" + y[0]);
-        System.out.println(x[1] + "========" + y[1]);
-        System.out.println(x[2] + "========" + y[2]);
-        path.moveTo(x[0], y[0]);
-        path.lineTo(x[1], y[1]);
-        path.lineTo(x[2], y[2]);
-        path.close();
-        canvas.drawPath(path, p);
-
-
-        return p;
-    }
-
-    /**
-     * 将彩色图转换为灰度图
-     *
-     * @param img 位图
-     * @return 返回转换好的位图
-     */
-    public Bitmap convertGreyImg(Bitmap img) {
-        int width = img.getWidth();         //获取位图的宽
-        int height = img.getHeight();       //获取位图的高
-
-        int[] pixels = new int[width * height]; //通过位图的大小创建像素点数组
-
-        img.getPixels(pixels, 0, width, 0, 0, width, height);
-        int alpha = 0xFF << 24;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                int grey = pixels[width * i + j];
-
-                int red = ((grey & 0x00FF0000) >> 16);
-                int green = ((grey & 0x0000FF00) >> 8);
-                int blue = (grey & 0x000000FF);
-
-                grey = (int) ((float) red * 0.3 + (float) green * 0.59 + (float) blue * 0.11);
-                grey = alpha | (grey << 16) | (grey << 8) | grey;
-                pixels[width * i + j] = grey;
-            }
-        }
-        Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        result.setPixels(pixels, 0, width, 0, 0, width, height);
-        return result;
-    }
 }

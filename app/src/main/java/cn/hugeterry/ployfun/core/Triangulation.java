@@ -32,22 +32,21 @@ import java.util.Set;
 
 /**
  * A 2D Delaunay Triangulation (DT) with incremental site insertion.
- *
+ * <p/>
  * This is not the fastest way to build a DT, but it's a reasonable way to build
  * a DT incrementally and it makes a nice interactive display. There are several
  * O(n log n) methods, but they require that the sites are all known initially.
- *
+ * <p/>
  * A Triangulation is a Set of Triangles. A Triangulation is unmodifiable as a
  * Set; the only way to change it is to add sites (via delaunayPlace).
  *
  * @author Paul Chew
- *
- * Created July 2005. Derived from an earlier, messier version.
- *
- * Modified November 2007. Rewrote to use AbstractSet as parent class and to use
- * the Graph class internally. Tried to make the DT algorithm clearer by
- * explicitly creating a cavity.  Added code needed to find a Voronoi cell.
- *
+ *         <p/>
+ *         Created July 2005. Derived from an earlier, messier version.
+ *         <p/>
+ *         Modified November 2007. Rewrote to use AbstractSet as parent class and to use
+ *         the Graph class internally. Tried to make the DT algorithm clearer by
+ *         explicitly creating a cavity.  Added code needed to find a Voronoi cell.
  */
 public class Triangulation extends AbstractSet<Triangle> {
 
@@ -56,9 +55,10 @@ public class Triangulation extends AbstractSet<Triangle> {
 
     /**
      * All sites must fall within the initial triangle.
+     *
      * @param triangle the initial triangle
      */
-    public Triangulation (Triangle triangle) {
+    public Triangulation(Triangle triangle) {
         triGraph = new Graph<Triangle>();
         triGraph.add(triangle);
         mostRecent = triangle;
@@ -67,40 +67,42 @@ public class Triangulation extends AbstractSet<Triangle> {
     /* The following two methods are required by AbstractSet */
 
     @Override
-    public Iterator<Triangle> iterator () {
+    public Iterator<Triangle> iterator() {
         return triGraph.nodeSet().iterator();
     }
 
     @Override
-    public int size () {
+    public int size() {
         return triGraph.nodeSet().size();
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Triangulation with " + size() + " triangles";
     }
 
     /**
      * True iff triangle is a member of this triangulation.
      * This method isn't required by AbstractSet, but it improves efficiency.
+     *
      * @param triangle the object to check for membership
      */
-    public boolean contains (Object triangle) {
+    public boolean contains(Object triangle) {
         return triGraph.nodeSet().contains(triangle);
     }
 
     /**
      * Report neighbor opposite the given vertex of triangle.
-     * @param site a vertex of triangle
+     *
+     * @param site     a vertex of triangle
      * @param triangle we want the neighbor of this triangle
      * @return the neighbor opposite site in triangle; null if none
      * @throws IllegalArgumentException if site is not in this triangle
      */
-    public Triangle neighborOpposite (Pnt site, Triangle triangle) {
+    public Triangle neighborOpposite(Pnt site, Triangle triangle) {
         if (!triangle.contains(site))
             throw new IllegalArgumentException("Bad vertex; not in triangle");
-        for (Triangle neighbor: triGraph.neighbors(triangle)) {
+        for (Triangle neighbor : triGraph.neighbors(triangle)) {
             if (!neighbor.contains(site)) return neighbor;
         }
         return null;
@@ -108,6 +110,7 @@ public class Triangulation extends AbstractSet<Triangle> {
 
     /**
      * Return the set of triangles adjacent to triangle.
+     *
      * @param triangle the triangle to check
      * @return the neighbors of triangle
      */
@@ -117,12 +120,13 @@ public class Triangulation extends AbstractSet<Triangle> {
 
     /**
      * Report triangles surrounding site in order (cw or ccw).
-     * @param site we want the surrounding triangles for this site
+     *
+     * @param site     we want the surrounding triangles for this site
      * @param triangle a "starting" triangle that has site as a vertex
      * @return all triangles surrounding site in order (cw or ccw)
      * @throws IllegalArgumentException if site is not in triangle
      */
-    public List<Triangle> surroundingTriangles (Pnt site, Triangle triangle) {
+    public List<Triangle> surroundingTriangles(Pnt site, Triangle triangle) {
         if (!triangle.contains(site))
             throw new IllegalArgumentException("Site not in triangle");
         List<Triangle> list = new ArrayList<Triangle>();
@@ -140,10 +144,11 @@ public class Triangulation extends AbstractSet<Triangle> {
 
     /**
      * Locate the triangle with point inside it or on its boundary.
+     *
      * @param point the point to locate
      * @return the triangle that holds point; null if no such triangle
      */
-    public Triangle locate (Pnt point) {
+    public Triangle locate(Pnt point) {
         Triangle triangle = mostRecent;
         if (!this.contains(triangle)) triangle = null;
 
@@ -162,7 +167,7 @@ public class Triangulation extends AbstractSet<Triangle> {
         }
         // No luck; try brute force
         System.out.println("Warning: Checking all triangles for " + point);
-        for (Triangle tri: this) {
+        for (Triangle tri : this) {
             if (point.isOutside(tri.toArray(new Pnt[0])) == null) return tri;
         }
         // No such triangle
@@ -173,10 +178,11 @@ public class Triangulation extends AbstractSet<Triangle> {
     /**
      * Place a new site into the DT.
      * Nothing happens if the site matches an existing DT vertex.
+     *
      * @param site the new Pnt
      * @throws IllegalArgumentException if site does not lie in any triangle
      */
-    public void delaunayPlace (Pnt site) {
+    public void delaunayPlace(Pnt site) {
         // Uses straightforward scheme rather than best asymptotic time
 
         // Locate containing triangle
@@ -193,11 +199,12 @@ public class Triangulation extends AbstractSet<Triangle> {
 
     /**
      * Determine the cavity caused by site.
-     * @param site the site causing the cavity
+     *
+     * @param site     the site causing the cavity
      * @param triangle the triangle containing site
      * @return set of all triangles that have site in their circumcircle
      */
-    private Set<Triangle> getCavity (Pnt site, Triangle triangle) {
+    private Set<Triangle> getCavity(Pnt site, Triangle triangle) {
         Set<Triangle> encroached = new HashSet<Triangle>();
         Queue<Triangle> toBeChecked = new LinkedList<Triangle>();
         Set<Triangle> marked = new HashSet<Triangle>();
@@ -209,7 +216,7 @@ public class Triangulation extends AbstractSet<Triangle> {
                 continue; // Site outside triangle => triangle not in cavity
             encroached.add(triangle);
             // Check the neighbors
-            for (Triangle neighbor: triGraph.neighbors(triangle)){
+            for (Triangle neighbor : triGraph.neighbors(triangle)) {
                 if (marked.contains(neighbor)) continue;
                 marked.add(neighbor);
                 toBeChecked.add(neighbor);
@@ -221,18 +228,19 @@ public class Triangulation extends AbstractSet<Triangle> {
     /**
      * Update the triangulation by removing the cavity triangles and then
      * filling the cavity with new triangles.
-     * @param site the site that created the cavity
+     *
+     * @param site   the site that created the cavity
      * @param cavity the triangles with site in their circumcircle
      * @return one of the new triangles
      */
-    private Triangle update (Pnt site, Set<Triangle> cavity) {
+    private Triangle update(Pnt site, Set<Triangle> cavity) {
         Set<Set<Pnt>> boundary = new HashSet<Set<Pnt>>();
         Set<Triangle> theTriangles = new HashSet<Triangle>();
 
         // Find boundary facets and adjacent triangles
-        for (Triangle triangle: cavity) {
+        for (Triangle triangle : cavity) {
             theTriangles.addAll(neighbors(triangle));
-            for (Pnt vertex: triangle) {
+            for (Pnt vertex : triangle) {
                 Set<Pnt> facet = triangle.facetOpposite(vertex);
                 if (boundary.contains(facet)) boundary.remove(facet);
                 else boundary.add(facet);
@@ -241,11 +249,11 @@ public class Triangulation extends AbstractSet<Triangle> {
         theTriangles.removeAll(cavity);        // Adj triangles only
 
         // Remove the cavity triangles from the triangulation
-        for (Triangle triangle: cavity) triGraph.remove(triangle);
+        for (Triangle triangle : cavity) triGraph.remove(triangle);
 
         // Build each new triangle and add it to the triangulation
         Set<Triangle> newTriangles = new HashSet<Triangle>();
-        for (Set<Pnt> vertices: boundary) {
+        for (Set<Pnt> vertices : boundary) {
             vertices.add(site);
             Triangle tri = new Triangle(vertices);
             triGraph.add(tri);
@@ -254,8 +262,8 @@ public class Triangulation extends AbstractSet<Triangle> {
 
         // Update the graph links for each new triangle
         theTriangles.addAll(newTriangles);    // Adj triangle + new triangles
-        for (Triangle triangle: newTriangles)
-            for (Triangle other: theTriangles)
+        for (Triangle triangle : newTriangles)
+            for (Triangle other : theTriangles)
                 if (triangle.isNeighbor(other))
                     triGraph.add(triangle, other);
 
@@ -266,15 +274,15 @@ public class Triangulation extends AbstractSet<Triangle> {
     /**
      * Main program; used for testing.
      */
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         Triangle tri =
-            new Triangle(new Pnt(0,0), new Pnt(0,2), new Pnt(2,0));
+                new Triangle(new Pnt(0, 0), new Pnt(0, 2), new Pnt(2, 0));
         System.out.println("Triangle created: " + tri);
         Triangulation dt = new Triangulation(tri);
         System.out.println("DelaunayTriangulation created: " + dt);
-        dt.delaunayPlace(new Pnt(0,0));
-        dt.delaunayPlace(new Pnt(1,0));
-        dt.delaunayPlace(new Pnt(0,1));
+        dt.delaunayPlace(new Pnt(0, 0));
+        dt.delaunayPlace(new Pnt(1, 0));
+        dt.delaunayPlace(new Pnt(0, 1));
         System.out.println("After adding 3 points, we have a " + dt);
         Triangle.moreInfo = true;
         System.out.println("Triangles: " + dt.triGraph.nodeSet());
