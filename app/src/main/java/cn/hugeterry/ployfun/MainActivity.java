@@ -1,5 +1,6 @@
 package cn.hugeterry.ployfun;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -29,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView iv;
     Canvas canvas;
-
+    Paint p;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //***************************
-        System.out.println(width + "=====" + height);
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.me)
+//        System.out.println(width + "=====" + height);
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.ea)
                 .copy(Bitmap.Config.ARGB_8888, true);
         Bitmap resultBitmap = convertGreyImg(bmp);
         if (canvas == null) {
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("正在加入点并剖分三角，请耐心等待。。。");
         for (int i = 0; i < count; i++) {
             MyPoint p = pnts.get(i);
-            resultBitmap.setPixel(p.x, p.y, 0xffffffff);
+            bmp.setPixel(p.x, p.y, 0xffffffff);
             dt.delaunayPlace(new Pnt(p.x, p.y));//加入三角点
         }
 
@@ -123,19 +124,23 @@ public class MainActivity extends AppCompatActivity {
                     //取中点颜色
                     int cx = xd / 3;
                     int cy = yd / 3;
-//                System.out.println(cx+"--"+cy);
-                    int rgb = resultBitmap.getPixel(cx, cy);//三角形填充色
+                    System.out.println(cx + "--" + cy);
+                    int rgb = bmp.getPixel(cx, cy);//三角形填充色
                     //绘画图形
-                    drawSanJiao(vertices, rgb, canvas);
+                    p = drawSanJiao(vertices, rgb, canvas, height, width, getResources());
                 }
             }
-            iv.setImageBitmap(resultBitmap);
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ea)
+                    .copy(Bitmap.Config.ARGB_8888, true);
+            canvas.drawBitmap(bitmap, width, height, p);
+
+            iv.setImageBitmap(bmp);
             System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
         }
 
     }
 
-    public static void drawSanJiao(Pnt[] polygon, int fillColor, Canvas canvas) {
+    public static Paint drawSanJiao(Pnt[] polygon, int fillColor, Canvas canvas, int height, int width, Resources res) {
         int[] x = new int[polygon.length];
         int[] y = new int[polygon.length];
         for (int i = 0; i < polygon.length; i++) {
@@ -145,12 +150,18 @@ public class MainActivity extends AppCompatActivity {
         Paint p = new Paint();
         Path path = new Path();
         p.setColor(fillColor);
-        path.lineTo(x[0], y[0]);
-        path.moveTo(x[1], y[1]);
+        System.out.println("fillColorrrrrrrrrrrrrrrrrrrrrr=====" + fillColor);
+        System.out.println(x[0] + "========" + y[0]);
+        System.out.println(x[1] + "========" + y[1]);
+        System.out.println(x[2] + "========" + y[2]);
+        path.moveTo(x[0], y[0]);
+        path.lineTo(x[1], y[1]);
         path.lineTo(x[2], y[2]);
         path.close();
         canvas.drawPath(path, p);
 
+
+        return p;
     }
 
     /**
