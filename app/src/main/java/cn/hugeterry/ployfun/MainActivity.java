@@ -1,13 +1,10 @@
 package cn.hugeterry.ployfun;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +21,7 @@ import cn.hugeterry.ployfun.core.Triangle;
 
 public class MainActivity extends AppCompatActivity {
     static int graMax = 30;//边缘检测的阀值控制，值越大，出来的点越少
-    static int pc = 4000;//最后绘制的点数量控制
+    static int pc = 400;//最后绘制的点数量控制
     static int initialSize = 10000;//包围三角形的大小
     static Triangulation dt;
     static List<MyPoint> pnts = new ArrayList<MyPoint>();
@@ -77,15 +74,13 @@ public class MainActivity extends AppCompatActivity {
 
         //***************************
         System.out.println(width + "=====" + height);
-
-        Bitmap bmp = Bitmap.createBitmap(width,
-                height, Bitmap.Config.RGB_565);
-
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.me)
+                .copy(Bitmap.Config.ARGB_8888, true);
         Bitmap resultBitmap = convertGreyImg(bmp);
         if (canvas == null) {
             canvas = new Canvas(bmp);
         }
-        
+
         for (int y = 1; y < height - 1; ++y) {
             for (int x = 1; x < width - 1; ++x) {
                 int rgb = resultBitmap.getPixel(x, y);
