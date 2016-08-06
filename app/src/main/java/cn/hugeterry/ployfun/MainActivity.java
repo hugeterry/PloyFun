@@ -7,6 +7,7 @@ import android.graphics.Paint;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private Button doit;
     private Canvas canvas;
     private Paint p;
+
+    private int xd, yd;
+    private int x, y;
+    private int cx, cy, rgb;
+    private int in = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,17 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 new Pnt(0, PolyfunKey.initialSize));
         dt = new Triangulation(initialTriangle);
         //**************读取图片所在位置******************
-//        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.me)
-//                .copy(Bitmap.Config.ARGB_8888, true);
         Bitmap bmp = iv.getDrawingCache();
         int height = bmp.getHeight();
         int width = bmp.getWidth();
-//        int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-//        int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-//        iv.measure(w, h);
-//        int height = iv.getMeasuredHeight();
-//        int width = iv.getMeasuredWidth();
-//        bmp = Bitmap.createScaledBitmap(bmp, bmp_width, bmp_height, true);
+        Log.i("PolyFun WH", "11111height:" + height + ",width:" + width);
         //加入四个端点
         dt.delaunayPlace(new Pnt(1, 1));
         dt.delaunayPlace(new Pnt(1, height - 1));
@@ -91,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
         if (canvas == null) {
             canvas = new Canvas(bmp);
         }
-
         for (int y = 1; y < height - 1; ++y) {
             for (int x = 1; x < width - 1; ++x) {
                 int rgb = resultBitmap.getPixel(x, y);
@@ -115,32 +113,32 @@ public class MainActivity extends AppCompatActivity {
          * 开始绘制最终结果
          */
         for (Triangle triangle : dt) {//取出所有三角形
-            int xd = 0;
-            int yd = 0;
+            xd = 0;
+            yd = 0;
             Pnt[] vertices = triangle.toArray(new Pnt[0]);//取出三个点
 
-            boolean in = true;
+            in = 3;
             for (Pnt pnt : vertices) {//判断三个点都在图片内
-                int x = (int) pnt.coord(0);
-                int y = (int) pnt.coord(1);
+                x = (int) pnt.coord(0);
+                y = (int) pnt.coord(1);
                 xd += x;
                 yd += y;
                 if (x < 0 || x > width || y < 0 || y > height) {
-                    in = false;
-                }
-                if (in) {//三个点都在图内,才画三角形
-                    //取中点颜色
-                    int cx = xd / 3;
-                    int cy = yd / 3;
-                    System.out.println(cx + "--" + cy);
-                    int rgb = bmp.getPixel(cx, cy);//三角形填充色
-                    //绘画图形
-                    p = DrawTriangle.drawTriangle(vertices, rgb, canvas, height, width, getResources());
+                    in -= 1;
                 }
             }
+            if (in == 3) {//三个点都在图内,才画三角形
+                //取中点颜色
+                cx = xd / 3;
+                cy = yd / 3;
+                rgb = bmp.getPixel(cx, cy);//三角形填充色
+                //绘画图形
+                p = DrawTriangle.drawTriangle(vertices, rgb, canvas, getResources());
+            }
+
         }
 
-        canvas.drawBitmap(bmp, width, height, p);
+//        canvas.drawBitmap(bmp, width, height, p);
         seeit.setImageBitmap(bmp);
         System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
 
