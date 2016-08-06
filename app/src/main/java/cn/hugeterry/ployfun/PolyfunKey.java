@@ -6,6 +6,6 @@ package cn.hugeterry.ployfun;
  */
 public class PolyfunKey {
     public static final int graMax = 30;//边缘检测的阀值控制，值越大，出来的点越少
-    public static final int pc = 1000;//最后绘制的点数量控制
-    public static final int initialSize = 3000;//包围三角形的大小
+    public static final int pc = 4000;//最后绘制的点数量控制
+    public static final int initialSize = 10000;//包围三角形的大小
 }

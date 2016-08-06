@@ -1,6 +1,7 @@
 package cn.hugeterry.ployfun.utils;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 /**
  * Created by hugeterry(http://hugeterry.cn)
@@ -35,6 +36,7 @@ public class ConvertGreyImg {
             }
         }
         Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Log.i("PolyFun WH", "22222height:" + height + ",width:" + width);
         result.setPixels(pixels, 0, width, 0, 0, width, height);
         return result;
     }

@@ -12,15 +12,20 @@ import cn.hugeterry.ployfun.core.Pnt;
  * Date: 16/5/1 16:07
  */
 public class DrawTriangle {
-    public static Paint drawTriangle(Pnt[] polygon, int fillColor, Canvas canvas, int height, int width, Resources res) {
-        int[] x = new int[polygon.length];
-        int[] y = new int[polygon.length];
+    private static int[] x, y;
+    private static Paint p;
+    private static Path path;
+
+
+    public static Paint drawTriangle(Pnt[] polygon, int fillColor, Canvas canvas,  Resources res) {
+        x = new int[polygon.length];
+        y = new int[polygon.length];
         for (int i = 0; i < polygon.length; i++) {
             x[i] = (int) polygon[i].coord(0);
             y[i] = (int) polygon[i].coord(1);
         }
-        Paint p = new Paint();
-        Path path = new Path();
+        p = new Paint();
+        path = new Path();
         p.setColor(fillColor);
         System.out.println("fillColorrrrrrrrrrrrrrrrrrrrrr=====" + fillColor);
         System.out.println(x[0] + "========" + y[0]);
