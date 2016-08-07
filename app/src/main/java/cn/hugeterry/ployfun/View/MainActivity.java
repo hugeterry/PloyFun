@@ -1,17 +1,25 @@
 package cn.hugeterry.ployfun.View;
 
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import android.net.Uri;
 import android.os.Process;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +37,7 @@ import cn.hugeterry.ployfun.core.Triangulation;
 import cn.hugeterry.ployfun.core.Triangle;
 import cn.hugeterry.ployfun.utils.ConvertGreyImg;
 import cn.hugeterry.ployfun.utils.DrawTriangle;
+import cn.hugeterry.ployfun.utils.GetPhoto;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private Button doit;
     private Canvas canvas;
     private Paint p;
+    private Bitmap bmp;
 
     private int xd, yd;
     private int x, y;
@@ -58,6 +68,12 @@ public class MainActivity extends AppCompatActivity {
         doit = (Button) findViewById(R.id.doit);
         iv.setDrawingCacheEnabled(true);
 
+        iv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetPhoto.gallery(MainActivity.this);
+            }
+        });
         doit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 new Pnt(0, PolyfunKey.initialSize));
         dt = new Triangulation(initialTriangle);
         //**************读取图片所在位置******************
-        Bitmap bmp = iv.getDrawingCache();
+        bmp = iv.getDrawingCache();
         int height = bmp.getHeight();
         int width = bmp.getWidth();
         Log.i("PolyFun WH", "11111height:" + height + ",width:" + width);
@@ -116,8 +132,8 @@ public class MainActivity extends AppCompatActivity {
         Log.i("TAG", "DODOGGGGGGG");
         for (int i = 0; i < count; i++) {
             MyPoint p = pnts.get(i);
-        //  bmp.setPixel(p.x, p.y, 0xffffffff);用来观测加入的三角点
-        //  三角剖分
+            //  bmp.setPixel(p.x, p.y, 0xffffffff);用来观测加入的三角点
+            //  三角剖分
             dt.delaunayPlace(new Pnt(p.x, p.y));//加入三角点
         }
 //        Thread t1 = new Thread(new DelaunayThread(dt, pnts, count));
@@ -136,36 +152,36 @@ public class MainActivity extends AppCompatActivity {
          * 开始绘制最终结果
          */
 //        if (executor.isTerminated()) {
-            for (Triangle triangle : dt) {//取出所有三角形
-                xd = 0;
-                yd = 0;
-                Pnt[] vertices = triangle.toArray(new Pnt[0]);//取出三个点
+        for (Triangle triangle : dt) {//取出所有三角形
+            xd = 0;
+            yd = 0;
+            Pnt[] vertices = triangle.toArray(new Pnt[0]);//取出三个点
 
-                in = 3;
-                for (Pnt pnt : vertices) {//判断三个点都在图片内
-                    x = (int) pnt.coord(0);
-                    y = (int) pnt.coord(1);
-                    xd += x;
-                    yd += y;
-                    if (x < 0 || x > width || y < 0 || y > height) {
-                        in -= 1;
-                    }
+            in = 3;
+            for (Pnt pnt : vertices) {//判断三个点都在图片内
+                x = (int) pnt.coord(0);
+                y = (int) pnt.coord(1);
+                xd += x;
+                yd += y;
+                if (x < 0 || x > width || y < 0 || y > height) {
+                    in -= 1;
                 }
-                if (in == 3) {//三个点都在图内,才画三角形
-                    //取中点颜色
-                    cx = xd / 3;
-                    cy = yd / 3;
-                    rgb = bmp.getPixel(cx, cy);//三角形填充色
-                    //绘画图形
-                    p = DrawTriangle.drawTriangle(vertices, rgb, canvas, getResources());
-                }
-
+            }
+            if (in == 3) {//三个点都在图内,才画三角形
+                //取中点颜色
+                cx = xd / 3;
+                cy = yd / 3;
+                rgb = bmp.getPixel(cx, cy);//三角形填充色
+                //绘画图形
+                p = DrawTriangle.drawTriangle(vertices, rgb, canvas, getResources());
             }
 
-//        canvas.drawBitmap(bmp, width, height, p);
-            seeit.setImageBitmap(bmp);
-            System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
         }
+
+//        canvas.drawBitmap(bmp, width, height, p);
+        seeit.setImageBitmap(bmp);
+        System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
+    }
 //    }
 
     @Override
@@ -178,6 +194,32 @@ public class MainActivity extends AppCompatActivity {
             // Too bad
         } finally {
             Process.killProcess(Process.myPid());
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 2) {
+            try {
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+                Cursor cursor = getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                cursor.close();
+                iv.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            } catch (Exception e) {
+                // TODO: handle exception
+                e.printStackTrace();
+            }
+        } else {
+            Toast.makeText(this, "请重新选择图片", Toast.LENGTH_SHORT).show();
         }
     }
 }
