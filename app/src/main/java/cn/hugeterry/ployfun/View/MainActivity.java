@@ -1,10 +1,10 @@
-package cn.hugeterry.ployfun;
+package cn.hugeterry.ployfun.View;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import android.os.Process;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +16,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
+import cn.hugeterry.ployfun.Bean.MyPoint;
+import cn.hugeterry.ployfun.DelaunayThread;
+import cn.hugeterry.ployfun.PolyfunKey;
+import cn.hugeterry.ployfun.R;
 import cn.hugeterry.ployfun.core.Pnt;
 import cn.hugeterry.ployfun.core.Triangulation;
 import cn.hugeterry.ployfun.core.Triangle;
@@ -24,6 +31,8 @@ import cn.hugeterry.ployfun.utils.ConvertGreyImg;
 import cn.hugeterry.ployfun.utils.DrawTriangle;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ExecutorService executor = Executors.newCachedThreadPool();
 
     public static Triangulation dt;
     public static List<MyPoint> pnts = new ArrayList<MyPoint>();
@@ -99,49 +108,76 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        Log.i("TAG", "DODOEEEEEEE");
         System.out.println("未过滤点集有" + pnts.size() + "个，正在随机排序");
         Collections.shuffle(pnts);
         int count = Math.min(pnts.size(), PolyfunKey.pc);
         System.out.println("正在加入点并剖分三角，请耐心等待。。。");
+        Log.i("TAG", "DODOGGGGGGG");
         for (int i = 0; i < count; i++) {
             MyPoint p = pnts.get(i);
-            bmp.setPixel(p.x, p.y, 0xffffffff);
+        //  bmp.setPixel(p.x, p.y, 0xffffffff);用来观测加入的三角点
+        //  三角剖分
             dt.delaunayPlace(new Pnt(p.x, p.y));//加入三角点
         }
+//        Thread t1 = new Thread(new DelaunayThread(dt, pnts, count));
+//        Thread t2 = new Thread(new DelaunayThread(dt, pnts, count));
+//        Thread t3 = new Thread(new DelaunayThread(dt, pnts, count));
+//        Thread t4 = new Thread(new DelaunayThread(dt, pnts, count));
+//
+//        executor.execute(t1);
+//        executor.execute(t2);
+//        executor.execute(t3);
+//        executor.execute(t4);
+//        executor.shutdown();
 
+        Log.i("TAG", "DODOOOOOO");
         /**
          * 开始绘制最终结果
          */
-        for (Triangle triangle : dt) {//取出所有三角形
-            xd = 0;
-            yd = 0;
-            Pnt[] vertices = triangle.toArray(new Pnt[0]);//取出三个点
+//        if (executor.isTerminated()) {
+            for (Triangle triangle : dt) {//取出所有三角形
+                xd = 0;
+                yd = 0;
+                Pnt[] vertices = triangle.toArray(new Pnt[0]);//取出三个点
 
-            in = 3;
-            for (Pnt pnt : vertices) {//判断三个点都在图片内
-                x = (int) pnt.coord(0);
-                y = (int) pnt.coord(1);
-                xd += x;
-                yd += y;
-                if (x < 0 || x > width || y < 0 || y > height) {
-                    in -= 1;
+                in = 3;
+                for (Pnt pnt : vertices) {//判断三个点都在图片内
+                    x = (int) pnt.coord(0);
+                    y = (int) pnt.coord(1);
+                    xd += x;
+                    yd += y;
+                    if (x < 0 || x > width || y < 0 || y > height) {
+                        in -= 1;
+                    }
                 }
-            }
-            if (in == 3) {//三个点都在图内,才画三角形
-                //取中点颜色
-                cx = xd / 3;
-                cy = yd / 3;
-                rgb = bmp.getPixel(cx, cy);//三角形填充色
-                //绘画图形
-                p = DrawTriangle.drawTriangle(vertices, rgb, canvas, getResources());
-            }
+                if (in == 3) {//三个点都在图内,才画三角形
+                    //取中点颜色
+                    cx = xd / 3;
+                    cy = yd / 3;
+                    rgb = bmp.getPixel(cx, cy);//三角形填充色
+                    //绘画图形
+                    p = DrawTriangle.drawTriangle(vertices, rgb, canvas, getResources());
+                }
 
-        }
+            }
 
 //        canvas.drawBitmap(bmp, width, height, p);
-        seeit.setImageBitmap(bmp);
-        System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
+            seeit.setImageBitmap(bmp);
+            System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
+        }
+//    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            executor.shutdownNow();
+            executor.awaitTermination(10, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // Too bad
+        } finally {
+            Process.killProcess(Process.myPid());
+        }
     }
-
 }

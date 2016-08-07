@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context="cn.hugeterry.ployfun.MainActivity">
+    tools:context=".View.MainActivity">
 
     <ImageView
         android:id="@+id/iv"
