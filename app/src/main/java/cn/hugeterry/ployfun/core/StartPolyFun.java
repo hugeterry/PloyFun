@@ -29,7 +29,6 @@ import cn.hugeterry.ployfun.utils.DrawTriangle;
  * Date: 16/8/13 11:34
  */
 public class StartPolyFun {
-    private Context context;
 
     public static Triangulation dt;
     public static List<MyPoint> pnts = new ArrayList<MyPoint>();
@@ -51,7 +50,7 @@ public class StartPolyFun {
         if (iv.isDrawingCacheEnabled() || seeit.isDrawingCacheEnabled()) {
             iv.destroyDrawingCache();
             seeit.destroyDrawingCache();
-            Log.i("polyfun", "destory drawing cache");
+            Log.i("PolyFun TAG", "destory drawing cache");
         }
         iv.setDrawingCacheEnabled(true);
         seeit.setDrawingCacheEnabled(true);
@@ -65,7 +64,7 @@ public class StartPolyFun {
         bmp = iv.getDrawingCache();
         int height = bmp.getHeight();
         int width = bmp.getWidth();
-        Log.i("PolyFun WH", "11111height:" + height + ",width:" + width);
+        Log.i("PolyFun TAG", "height:" + height + ",width:" + width);
         //加入四个端点
         dt.delaunayPlace(new Pnt(1, 1));
         dt.delaunayPlace(new Pnt(1, height - 1));
@@ -79,9 +78,6 @@ public class StartPolyFun {
             dt.delaunayPlace(new Pnt(x, y));
         }
 
-        //***************************
-//        System.out.println(width + "=====" + height);
-
         Bitmap resultBitmap = ConvertGreyImg.convertGreyImg(bmp);
         canvas = new Canvas(bmp);
         for (int y = 1; y < height - 1; ++y) {
@@ -93,17 +89,14 @@ public class StartPolyFun {
                 }
             }
         }
-        Log.i("TAG", "DODOEEEEEEE");
-        System.out.println("未过滤点集有" + pnts.size() + "个，正在随机排序");
+        Log.i("PolyFun TAG", "未过滤点集有" + pnts.size() + "个，正在随机排序");
         Collections.shuffle(pnts);
         int count = Math.min(pnts.size(), PolyfunKey.pc);
-        System.out.println("正在加入点并剖分三角，请耐心等待。。。");
-        Log.i("TAG", "DODOGGGGGGG");
+        Log.i("PolyFun TAG", "正在加入点并剖分三角，请耐心等待");
         for (int i = 0; i < count; i++) {
             MyPoint p = pnts.get(i);
             //  bmp.setPixel(p.x, p.y, 0xffffffff);用来观测加入的三角点
-            //  三角剖分
-            dt.delaunayPlace(new Pnt(p.x, p.y));//加入三角点
+            dt.delaunayPlace(new Pnt(p.x, p.y));
         }
 //        Thread t1 = new Thread(new DelaunayThread(dt, pnts, count));
 //        Thread t2 = new Thread(new DelaunayThread(dt, pnts, count));
@@ -116,10 +109,7 @@ public class StartPolyFun {
 //        executor.execute(t4);
 //        executor.shutdown();
 
-        Log.i("TAG", "DODOOOOOO");
-        /**
-         * 开始绘制最终结果
-         */
+        Log.i("PolyFun TAG", "开始绘制最终结果");
 //        if (executor.isTerminated()) {
         for (Triangle triangle : dt) {//取出所有三角形
             xd = 0;
@@ -150,10 +140,11 @@ public class StartPolyFun {
 //        canvas.drawBitmap(bmp, width, height, p);
         seeit.setImageBitmap(bmp);
 
-        System.out.println("输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
+        Log.i("PolyFun TAG", "输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
     }
 
     private static volatile StartPolyFun sInst = null;
+
     public static StartPolyFun getInstance(Context context, ImageView iv, ImageView seeit) {
         StartPolyFun inst = sInst;  // <<< 在这里创建临时变量
         if (inst == null) {

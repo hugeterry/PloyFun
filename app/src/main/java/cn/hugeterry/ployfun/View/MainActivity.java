@@ -2,8 +2,6 @@ package cn.hugeterry.ployfun.View;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -14,29 +12,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import cn.hugeterry.ployfun.Bean.MyPoint;
-import cn.hugeterry.ployfun.PolyfunKey;
 import cn.hugeterry.ployfun.R;
-import cn.hugeterry.ployfun.core.DelaunayTriangulation.Pnt;
-import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangulation;
-import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangle;
 import cn.hugeterry.ployfun.core.StartPolyFun;
-import cn.hugeterry.ployfun.utils.ConvertGreyImg;
-import cn.hugeterry.ployfun.utils.DrawTriangle;
 import cn.hugeterry.ployfun.utils.GetPhoto;
 
+/**
+ * Created by hugeterry(http://hugeterry.cn)
+ * Date: 16/6/7 13:24
+ */
 public class MainActivity extends AppCompatActivity {
-
     private ImageView iv, seeit;
     private Button doit;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +43,10 @@ public class MainActivity extends AppCompatActivity {
         doit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                StartPolyFun.getInstance(MainActivity.this, iv, seeit);
+                new StartPolyFun(MainActivity.this, iv, seeit);
             }
         });
-
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -80,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
                             // 这个方法是根据Uri获取Bitmap图片的静态方法
                             image = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                             iv.setImageBitmap(image);
-//                            mUri = uri;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -91,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
                             Bitmap image = extras.getParcelable("data");
                             if (image != null) {
                                 iv.setImageBitmap(image);
-//                                mUri = BitmapUtil.getImageUri(ctx, image);
                             }
                         }
                     }
