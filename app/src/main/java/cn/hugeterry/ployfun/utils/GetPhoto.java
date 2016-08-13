@@ -19,13 +19,9 @@ public class GetPhoto {
     /*
     * 从相册获取
         */
-    public static  void gallery(Context context) {
-        // 激活系统图库，选择一张图片
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
-        ((Activity) context).startActivityForResult(intent, 2);
+    public static void gallery(Context context) {
+        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        ((Activity)context).startActivityForResult(intent, 12);
     }
-
 
 }
