@@ -5,7 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 
-import cn.hugeterry.ployfun.core.Pnt;
+import cn.hugeterry.ployfun.core.DelaunayTriangulation.Pnt;
 
 /**
  * Created by hugeterry(http://hugeterry.cn)

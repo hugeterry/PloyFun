@@ -1,4 +1,4 @@
-package cn.hugeterry.ployfun.core;
+package cn.hugeterry.ployfun.core.DelaunayTriangulation;
 
 
 /*

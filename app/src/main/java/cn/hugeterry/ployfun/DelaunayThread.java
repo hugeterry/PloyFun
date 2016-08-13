@@ -3,8 +3,8 @@ package cn.hugeterry.ployfun;
 import java.util.List;
 
 import cn.hugeterry.ployfun.Bean.MyPoint;
-import cn.hugeterry.ployfun.core.Pnt;
-import cn.hugeterry.ployfun.core.Triangulation;
+import cn.hugeterry.ployfun.core.DelaunayTriangulation.Pnt;
+import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangulation;
 
 /**
  * Created by hugeterry(http://hugeterry.cn)
