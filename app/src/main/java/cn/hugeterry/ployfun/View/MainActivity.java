@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cn.hugeterry.ployfun.PolyfunKey;
@@ -30,12 +32,14 @@ import cn.hugeterry.ployfun.utils.ShareUtils;
  * Date: 16/6/7 13:24
  */
 public class MainActivity extends AppCompatActivity {
-    private ImageView iv, seeit;
-    private Toolbar toolbar;
     private Uri uri;
-    private LinearLayout ll_choose, ll_result;
-    private Button bt_save, bt_share;
     private String path;
+    private LinearLayout ll_choose, ll_result;
+    private ImageView iv;
+    private Toolbar toolbar;
+    private Button bt_save, bt_share;
+    private SeekBar seekbar;
+    private TextView seekbar_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +57,12 @@ public class MainActivity extends AppCompatActivity {
         ll_result = (LinearLayout) findViewById(R.id.ll_result);
         bt_save = (Button) findViewById(R.id.bt_save);
         bt_share = (Button) findViewById(R.id.bt_share);
+        seekbar = (SeekBar) findViewById(R.id.seekbar);
+        seekbar_count = (TextView) findViewById(R.id.seekbar_count);
+
         bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("PolyFun", path + "");
                 if (path == null || path.length() == 0) {
                     path = SavePhoto.writePhoto(iv.getDrawingCache());
                     SavePhoto.scanPhotos(path, MainActivity.this);
@@ -69,17 +75,31 @@ public class MainActivity extends AppCompatActivity {
         bt_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("PolyFun", path + "");
                 if (path == null || path.length() == 0) {
                     path = SavePhoto.writePhoto(iv.getDrawingCache());
                     SavePhoto.scanPhotos(path, MainActivity.this);
                     Snackbar.make(iv, "已保存到" + path, Snackbar.LENGTH_LONG).show();
                 }
-                Log.i("PolyFun", path + "");
                 ShareUtils.shareImage(MainActivity.this, path);
             }
         });
 
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                seekbar_count.setText(progress + 600 + "");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                PolyfunKey.pc = seekBar.getProgress() + 600;
+                Log.i("PolyFun pc", PolyfunKey.pc + "");
+            }
+        });
     }
 
 
@@ -121,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("uri", "111");
         switch (requestCode) {
             case 12:
                 if (resultCode == RESULT_OK) {
@@ -129,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i("uri", uri + "");
                     Bitmap image;
                     try {
-                        // 这个方法是根据Uri获取Bitmap图片的静态方法
                         image = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
                         iv.setImageBitmap(image);
                     } catch (Exception e) {
