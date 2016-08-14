@@ -110,7 +110,6 @@ public class StartPolyFun {
 //        executor.shutdown();
 
         Log.i("PolyFun TAG", "开始绘制最终结果");
-//        if (executor.isTerminated()) {
         for (Triangle triangle : dt) {//取出所有三角形
             xd = 0;
             yd = 0;
