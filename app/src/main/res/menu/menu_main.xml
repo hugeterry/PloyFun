@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_choose"
+        android:title="选择图片"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_done"
+        android:icon="@drawable/ic_done_white_24dp"
+        android:title="完成"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_about_me"
+        android:title="关于开发者"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:title="关于「趣刻」"
+        app:showAsAction="never" />
+</menu>
