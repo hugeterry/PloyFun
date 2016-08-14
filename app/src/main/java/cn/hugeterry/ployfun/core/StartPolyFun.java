@@ -1,12 +1,10 @@
 package cn.hugeterry.ployfun.core;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -47,13 +45,11 @@ public class StartPolyFun {
     private int in = 0;
 
     public StartPolyFun(Context context, ImageView iv, ImageView seeit) {
-        if (iv.isDrawingCacheEnabled() || seeit.isDrawingCacheEnabled()) {
+        if (iv.isDrawingCacheEnabled()) {
             iv.destroyDrawingCache();
-            seeit.destroyDrawingCache();
             Log.i("PolyFun TAG", "destory drawing cache");
         }
         iv.setDrawingCacheEnabled(true);
-        seeit.setDrawingCacheEnabled(true);
         //这是包围三角形的诞生地...
         Triangle initialTriangle = new Triangle(
                 new Pnt(-PolyfunKey.initialSize, -PolyfunKey.initialSize),

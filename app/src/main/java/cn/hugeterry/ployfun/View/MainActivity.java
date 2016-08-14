@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Button bt_save, bt_share;
     private SeekBar seekbar;
     private TextView seekbar_count;
+    private static boolean isDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,16 +120,20 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_choose:
                 path = null;
+                isDone = false;
                 ll_result.setVisibility(View.INVISIBLE);
                 ll_choose.setVisibility(View.VISIBLE);
                 GetPhoto.gallery(MainActivity.this);
                 break;
             case R.id.action_done:
                 if (uri != null) {
-                    new StartPolyFun(this, iv, iv);
+                    if (!isDone) {
+                        new StartPolyFun(this, iv, iv);
+                    } else Snackbar.make(iv, "已经制作完了，请重新选择图片", Snackbar.LENGTH_LONG).show();
                     ll_choose.setVisibility(View.INVISIBLE);
                     ll_result.setVisibility(View.VISIBLE);
                 } else Snackbar.make(iv, "请先选择图片再制作", Snackbar.LENGTH_LONG).show();
+                isDone = true;
                 break;
             case R.id.action_about_me:
                 break;
