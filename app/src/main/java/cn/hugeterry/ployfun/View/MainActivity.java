@@ -139,8 +139,11 @@ public class MainActivity extends AppCompatActivity {
                 isDone = true;
                 break;
             case R.id.action_about_me:
+                ShareUtils.shareUri(this, "http://www.hugeterry.cn/about");
                 break;
             case R.id.action_about:
+                Intent intent_about = new Intent(this, AboutActivity.class);
+                startActivity(intent_about);
                 break;
         }
         return super.onOptionsItemSelected(item);

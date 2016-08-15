@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">PloyFun</string>
+    <string name="about_title_1">「PloyFun」Android.APP</string>
+    <string name="about_text_1">为你喜欢的图片添上低平面风 </string>
+    <string name="about_me">开发与设计: HugeTerry\nhttp://hugeterry.cn</string>
 </resources>

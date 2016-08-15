@@ -28,4 +28,11 @@ public class ShareUtils {
         shareIntent.setType("image/jpeg");
         context.startActivity(Intent.createChooser(shareIntent, "分享图片"));
     }
+
+    public static void shareUri(Context context, String path) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(path));
+        context.startActivity(intent);
+    }
 }
