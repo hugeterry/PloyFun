@@ -8,10 +8,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -142,16 +140,6 @@ public class StartPolyFun extends Thread {
             //  bmp.setPixel(p.x, p.y, 0xffffffff);用来观测加入的三角点
             dt.delaunayPlace(new Pnt(p.x, p.y));
         }
-//        Thread t1 = new Thread(new DelaunayThread(dt, pnts, count));
-//        Thread t2 = new Thread(new DelaunayThread(dt, pnts, count));
-//        Thread t3 = new Thread(new DelaunayThread(dt, pnts, count));
-//        Thread t4 = new Thread(new DelaunayThread(dt, pnts, count));
-//
-//        executor.execute(t1);
-//        executor.execute(t2);
-//        executor.execute(t3);
-//        executor.execute(t4);
-//        executor.shutdown();
 
         Log.i("PolyFun TAG", "开始绘制最终结果");
         for (Triangle triangle : dt) {//取出所有三角形

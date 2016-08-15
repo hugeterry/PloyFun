@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUpdate() {
         UpdateKey.API_TOKEN = "";
-        UpdateKey.APP_ID = "";
+        UpdateKey.APP_ID = "57b14ee3ca87a87c1b0009e6";
         //UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;通过Dialog来进行下载
         UpdateFunGO.init(this);
     }
