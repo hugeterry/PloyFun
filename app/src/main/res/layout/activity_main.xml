@@ -67,7 +67,7 @@
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:max="800"
+            android:max="1400"
             android:progress="200" />
 
         <TextView

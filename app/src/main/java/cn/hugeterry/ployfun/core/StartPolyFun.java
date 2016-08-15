@@ -105,7 +105,6 @@ public class StartPolyFun extends Thread {
                 new Pnt(PolyfunKey.initialSize, -PolyfunKey.initialSize),
                 new Pnt(0, PolyfunKey.initialSize));
         dt = new Triangulation(initialTriangle);
-        //**************读取图片所在位置******************
         bmp = iv.getDrawingCache();
         int height = bmp.getHeight();
         int width = bmp.getWidth();
@@ -122,7 +121,7 @@ public class StartPolyFun extends Thread {
             int y = random.nextInt(height);
             dt.delaunayPlace(new Pnt(x, y));
         }
-
+        //灰度取点
         Bitmap resultBitmap = ConvertGreyImg.convertGreyImg(bmp);
         canvas = new Canvas(bmp);
         for (int y = 1; y < height - 1; ++y) {
