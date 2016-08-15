@@ -14,8 +14,8 @@
 <img src="showUI/sample_res03.png" height="400"/>
 <img src="showUI/sample01.jpg" width="400"/>
 <img src="showUI/sample_res01.png" width="400"/><br/>
-<img src="showUI/sample02.jpg" height="400"/>
-<img src="showUI/sample_res02.png" height="400"/>
+<img src="showUI/sample02.jpg" width="400"/>
+<img src="showUI/sample_res02.png" width="400"/>
 
 ## 算法
 - 通过灰度转化图片取边缘点以及随机取点
