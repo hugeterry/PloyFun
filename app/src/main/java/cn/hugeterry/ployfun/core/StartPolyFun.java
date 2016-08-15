@@ -1,5 +1,6 @@
 package cn.hugeterry.ployfun.core;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.concurrent.Executors;
 
 import cn.hugeterry.ployfun.Bean.MyPoint;
 import cn.hugeterry.ployfun.PolyfunKey;
+import cn.hugeterry.ployfun.View.MainActivity;
 import cn.hugeterry.ployfun.core.DelaunayTriangulation.Pnt;
 import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangle;
 import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangulation;
@@ -34,11 +37,9 @@ public class StartPolyFun extends Thread {
     private static final int POLY_START = 1;
     private static final int POLY_STOP = 2;
 
-    public static Triangulation dt;
-    public static List<MyPoint> pnts = new ArrayList<MyPoint>();
-    public static long time = System.currentTimeMillis();
-
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    public Triangulation dt;
+    public List<MyPoint> pnts = new ArrayList<MyPoint>();
+    public long time = System.currentTimeMillis();
 
     private Canvas canvas;
     private Paint p;
@@ -50,41 +51,48 @@ public class StartPolyFun extends Thread {
     private int in = 0;
 
     private Context context;
-    private static ImageView iv;
-    private static LinearLayout progressbar;
-    private static LinearLayout ll_choose, ll_result;
+    private ImageView iv;
     private Handler handler;
 
-    public StartPolyFun(Context context, ImageView iv, LinearLayout progressbar, LinearLayout ll_choose, LinearLayout ll_result) {
+    public StartPolyFun(Context context, MainActivity activity, ImageView iv) {
         this.context = context;
         this.iv = iv;
-        this.progressbar = progressbar;
-        this.ll_choose = ll_choose;
-        this.ll_result = ll_result;
-        handler = new PolyHandler();
+        handler = new PolyHandler(activity);
     }
 
     static class PolyHandler extends Handler {
+        WeakReference<MainActivity> mActivityReference;
+
+        PolyHandler(MainActivity activity) {
+            mActivityReference = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case POLY_START:
-                    if (progressbar.getVisibility() == View.GONE) {
-                        progressbar.setVisibility(View.VISIBLE);
-                        Log.i("PolyFun progress", "start");
-                    }
-                    break;
-                case POLY_STOP:
-                    iv.setImageBitmap(bmp);
-                    if (progressbar.getVisibility() == View.VISIBLE) {
-                        progressbar.setVisibility(View.GONE);
-                        Log.i("PolyFun progress", "stop");
-                    }
-                    ll_choose.setVisibility(View.INVISIBLE);
-                    ll_result.setVisibility(View.VISIBLE);
-                    break;
-                default:
-                    break;
+            MainActivity activity = mActivityReference.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case POLY_START:
+                        if (activity.progressbar.getVisibility() == View.GONE) {
+                            activity.progressbar.setVisibility(View.VISIBLE);
+                            Log.i("PolyFun progress", "start");
+                        }
+                        break;
+                    case POLY_STOP:
+                        activity.iv.setImageBitmap(bmp);
+                        if (activity.progressbar.getVisibility() == View.VISIBLE) {
+                            activity.progressbar.setVisibility(View.GONE);
+                            Log.i("PolyFun progress", "stop");
+                        }
+                        activity.ll_choose.setVisibility(View.INVISIBLE);
+                        activity.ll_result.setVisibility(View.VISIBLE);
+                        if (bmp != null) {
+                            bmp = null;
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

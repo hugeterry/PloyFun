@@ -35,13 +35,14 @@ import cn.hugeterry.updatefun.config.UpdateKey;
 public class MainActivity extends AppCompatActivity {
     private Uri uri;
     private String path;
-    private LinearLayout ll_choose, ll_result;
-    private ImageView iv;
+    public LinearLayout ll_choose;
+    public LinearLayout ll_result;
+    public ImageView iv;
     private Toolbar toolbar;
     private Button bt_save, bt_share;
     private SeekBar seekbar;
     private TextView seekbar_count;
-    private LinearLayout progressbar;
+    public LinearLayout progressbar;
     private static boolean isDone = false;
 
     @Override
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_done:
                 if (uri != null) {
                     if (!isDone) {
-                        new StartPolyFun(this, iv, progressbar, ll_choose, ll_result).start();
+                        new StartPolyFun(this, this, iv).start();
                     } else Snackbar.make(iv, "已经制作完了，请重新选择图片", Snackbar.LENGTH_LONG).show();
                 } else Snackbar.make(iv, "请先选择图片再制作", Snackbar.LENGTH_LONG).show();
                 isDone = true;
