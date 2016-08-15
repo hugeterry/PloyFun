@@ -27,7 +27,7 @@
             android:layout_width="96dp"
             android:layout_height="96dp"
             android:layout_margin="24dp"
-            android:background="@mipmap/ic_launcher" />
+            android:background="@mipmap/lowpoly_logo" />
 
         <TextView
             android:id="@+id/about_version"
