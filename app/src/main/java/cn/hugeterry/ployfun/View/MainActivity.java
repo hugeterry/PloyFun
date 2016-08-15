@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,13 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cn.hugeterry.ployfun.PolyfunKey;
 import cn.hugeterry.ployfun.R;
@@ -29,6 +25,8 @@ import cn.hugeterry.ployfun.core.StartPolyFun;
 import cn.hugeterry.ployfun.utils.GetPhoto;
 import cn.hugeterry.ployfun.utils.SavePhoto;
 import cn.hugeterry.ployfun.utils.ShareUtils;
+import cn.hugeterry.updatefun.UpdateFunGO;
+import cn.hugeterry.updatefun.config.UpdateKey;
 
 /**
  * Created by hugeterry(http://hugeterry.cn)
@@ -51,9 +49,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setupUpdate();
         initToolbar();
         initView();
+    }
 
+    private void setupUpdate() {
+        UpdateKey.API_TOKEN = "";
+        UpdateKey.APP_ID = "";
+        //UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;通过Dialog来进行下载
+        UpdateFunGO.init(this);
+    }
+
+    private void initToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     private void initView() {
@@ -106,12 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("PolyFun pc", PolyfunKey.pc + "");
             }
         });
-    }
-
-
-    private void initToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
     }
 
     @Override
@@ -167,5 +171,17 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UpdateFunGO.onResume(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        UpdateFunGO.onStop(this);
     }
 }
