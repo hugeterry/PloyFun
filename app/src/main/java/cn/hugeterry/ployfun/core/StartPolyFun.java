@@ -4,8 +4,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +32,9 @@ import cn.hugeterry.ployfun.utils.DrawTriangle;
  * Created by hugeterry(http://hugeterry.cn)
  * Date: 16/8/13 11:34
  */
-public class StartPolyFun {
+public class StartPolyFun extends Thread {
+    private static final int POLY_START = 1;
+    private static final int POLY_STOP = 2;
 
     public static Triangulation dt;
     public static List<MyPoint> pnts = new ArrayList<MyPoint>();
@@ -36,15 +44,56 @@ public class StartPolyFun {
 
     private Canvas canvas;
     private Paint p;
-    private Bitmap bmp;
-    private String picPath = null;
+    private static Bitmap bmp;
 
     private int xd, yd;
     private int x, y;
     private int cx, cy, rgb;
     private int in = 0;
 
-    public StartPolyFun(Context context, ImageView iv, ImageView seeit) {
+    private Context context;
+    private static ImageView iv;
+    private static LinearLayout progressbar;
+    private static LinearLayout ll_choose, ll_result;
+    private Handler handler;
+
+    public StartPolyFun(Context context, ImageView iv, LinearLayout progressbar, LinearLayout ll_choose, LinearLayout ll_result) {
+        this.context = context;
+        this.iv = iv;
+        this.progressbar = progressbar;
+        this.ll_choose = ll_choose;
+        this.ll_result = ll_result;
+        handler = new PolyHandler();
+    }
+
+    static class PolyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case POLY_START:
+                    if (progressbar.getVisibility() == View.GONE) {
+                        progressbar.setVisibility(View.VISIBLE);
+                        Log.i("PolyFun progress", "start");
+                    }
+                    break;
+                case POLY_STOP:
+                    iv.setImageBitmap(bmp);
+                    if (progressbar.getVisibility() == View.VISIBLE) {
+                        progressbar.setVisibility(View.GONE);
+                        Log.i("PolyFun progress", "stop");
+                    }
+                    ll_choose.setVisibility(View.INVISIBLE);
+                    ll_result.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        handler.sendEmptyMessage(POLY_START);
         if (iv.isDrawingCacheEnabled()) {
             iv.destroyDrawingCache();
             Log.i("PolyFun TAG", "destory drawing cache");
@@ -133,24 +182,9 @@ public class StartPolyFun {
         }
 
 //        canvas.drawBitmap(bmp, width, height, p);
-        seeit.setImageBitmap(bmp);
 
+        handler.sendEmptyMessage(POLY_STOP);
         Log.i("PolyFun TAG", "输出图片完成！耗时" + (System.currentTimeMillis() - time) + "ms");
     }
 
-    private static volatile StartPolyFun sInst = null;
-
-    public static StartPolyFun getInstance(Context context, ImageView iv, ImageView seeit) {
-        StartPolyFun inst = sInst;  // <<< 在这里创建临时变量
-        if (inst == null) {
-            synchronized (StartPolyFun.class) {
-                inst = sInst;
-                if (inst == null) {
-                    inst = new StartPolyFun(context, iv, seeit);
-                    sInst = inst;
-                }
-            }
-        }
-        return inst;  // <<< 注意这里返回的是临时变量
-    }
 }

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,8 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private Button bt_save, bt_share;
     private SeekBar seekbar;
     private TextView seekbar_count;
+    private LinearLayout progressbar;
     private static boolean isDone = false;
 
     @Override
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         bt_share = (Button) findViewById(R.id.bt_share);
         seekbar = (SeekBar) findViewById(R.id.seekbar);
         seekbar_count = (TextView) findViewById(R.id.seekbar_count);
+        progressbar = (LinearLayout) findViewById(R.id.progressbar);
 
         bt_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,10 +133,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_done:
                 if (uri != null) {
                     if (!isDone) {
-                        new StartPolyFun(this, iv, iv);
+                        new StartPolyFun(this, iv, progressbar, ll_choose, ll_result).start();
                     } else Snackbar.make(iv, "已经制作完了，请重新选择图片", Snackbar.LENGTH_LONG).show();
-                    ll_choose.setVisibility(View.INVISIBLE);
-                    ll_result.setVisibility(View.VISIBLE);
                 } else Snackbar.make(iv, "请先选择图片再制作", Snackbar.LENGTH_LONG).show();
                 isDone = true;
                 break;

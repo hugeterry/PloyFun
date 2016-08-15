@@ -60,14 +60,23 @@
             android:layout_height="wrap_content"
             android:text="绘制的精确度"
             android:textColor="#ffffff"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
         <SeekBar
             android:id="@+id/seekbar"
-            android:layout_width="match_parent"
+            android:layout_width="0dip"
             android:layout_height="wrap_content"
-            android:max="2000"
-            android:progress="600" />
+            android:layout_weight="2"
+            android:max="800"
+            android:progress="200" />
+
+        <TextView
+            android:id="@+id/seekbar_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="800"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -88,5 +97,17 @@
             tools:background="@mipmap/me" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#64000000"
+        android:gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible">
 
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp" />
+    </LinearLayout>
 </RelativeLayout>
