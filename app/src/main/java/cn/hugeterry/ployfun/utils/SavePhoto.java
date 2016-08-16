@@ -26,7 +26,8 @@ public class SavePhoto {
         }
         try {
             FileOutputStream os = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, os);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+            os.flush();
             os.close();
         } catch (IOException e) {
             e.printStackTrace();
