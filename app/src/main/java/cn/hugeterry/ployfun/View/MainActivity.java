@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar seekbar;
     private TextView seekbar_count;
     public LinearLayout progressbar;
-    private static boolean isDone = false;
+    private boolean isDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
