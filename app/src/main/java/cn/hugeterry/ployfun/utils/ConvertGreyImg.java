@@ -1,7 +1,6 @@
 package cn.hugeterry.ployfun.utils;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 /**
  * Created by hugeterry(http://hugeterry.cn)
