@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import cn.hugeterry.ployfun.Bean.MyPoint;
+import cn.hugeterry.ployfun.Bean.PointBean;
 import cn.hugeterry.ployfun.PolyfunKey;
 import cn.hugeterry.ployfun.View.MainActivity;
 import cn.hugeterry.ployfun.core.DelaunayTriangulation.Pnt;
@@ -34,7 +34,7 @@ public class StartPolyFun extends Thread {
     private static final int POLY_STOP = 2;
 
     public Triangulation dt;
-    public List<MyPoint> pnts = new ArrayList<MyPoint>();
+    public List<PointBean> pnts = new ArrayList<>();
     public long time = System.currentTimeMillis();
 
     private Canvas canvas;
@@ -131,7 +131,7 @@ public class StartPolyFun extends Thread {
                 int rgb = resultBitmap.getPixel(x, y);
                 rgb = (rgb & 0xff0000) >> 16;//留灰度
                 if (rgb > PolyfunKey.graMax) {
-                    pnts.add(new MyPoint(x, y));
+                    pnts.add(new PointBean(x, y));
                 }
             }
         }
@@ -140,7 +140,7 @@ public class StartPolyFun extends Thread {
         int count = Math.min(pnts.size(), PolyfunKey.pc);
         Log.i("PolyFun TAG", "正在加入点并剖分三角，请耐心等待");
         for (int i = 0; i < count; i++) {
-            MyPoint p = pnts.get(i);
+            PointBean p = pnts.get(i);
             //  bmp.setPixel(p.x, p.y, 0xffffffff);用来观测加入的三角点
             dt.delaunayPlace(new Pnt(p.x, p.y));
         }
