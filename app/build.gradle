@@ -26,5 +26,5 @@ dependencies {
     compile 'com.android.support:design:23.3.0'
 
     //自己开源的应用更新库https://github.com/hugeterry/UpdateDemo
-    compile 'cn.hugeterry.updatefun:updatefun:1.6.6'
+    compile 'cn.hugeterry.updatefun:updatefun:1.8.4'
 }
