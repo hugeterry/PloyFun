@@ -10,11 +10,11 @@ import android.content.Intent;
  */
 public class GetPhoto {
     /*
-    * 从相册获取
-        */
+     * 从相册获取
+    */
     public static void gallery(Context context) {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        ((Activity)context).startActivityForResult(intent, 12);
+        ((Activity) context).startActivityForResult(intent, 12);
     }
 
 }

@@ -16,9 +16,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import cn.hugeterry.ployfun.Bean.PointBean;
+import cn.hugeterry.ployfun.bean.PointBean;
 import cn.hugeterry.ployfun.PolyfunKey;
-import cn.hugeterry.ployfun.View.MainActivity;
+import cn.hugeterry.ployfun.view.MainActivity;
 import cn.hugeterry.ployfun.core.DelaunayTriangulation.Pnt;
 import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangle;
 import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangulation;

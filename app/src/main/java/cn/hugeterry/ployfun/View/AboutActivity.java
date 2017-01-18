@@ -1,4 +1,4 @@
-package cn.hugeterry.ployfun.View;
+package cn.hugeterry.ployfun.view;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

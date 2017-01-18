@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:gravity="center"
-    tools:context=".View.MainActivity">
+    tools:context=".view.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
