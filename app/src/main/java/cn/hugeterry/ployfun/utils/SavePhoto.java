@@ -31,7 +31,6 @@ public class SavePhoto {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return sdCardDir + strPath;
     }
 

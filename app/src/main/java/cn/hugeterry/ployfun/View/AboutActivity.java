@@ -11,7 +11,6 @@ import cn.hugeterry.ployfun.BuildConfig;
 import cn.hugeterry.ployfun.R;
 import cn.hugeterry.ployfun.utils.ShareUtils;
 
-
 /**
  * Created by hugeterry(http://hugeterry.cn)
  * Date: 16/2/24 02:24
