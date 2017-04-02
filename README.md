@@ -4,12 +4,12 @@
 - 通过一张输入图像，输出其对应的 low-poly 图
 - 直接下载：[http://fir.im/polyfun](http://fir.im/polyfun)
 
-##Demo
+## Demo
 <img src="showUI/1.jpg" height="400"/>
 <img src="showUI/2.jpg" height="400"/>
 <img src="showUI/3.jpg" height="400"/>
 
-##图片结果
+## 图片结果
 <img src="showUI/sample03.jpg" height="400"/>
 <img src="showUI/sample_res03.png" height="400"/><br/>
 <img src="showUI/sample02.jpg" width="400"/>
