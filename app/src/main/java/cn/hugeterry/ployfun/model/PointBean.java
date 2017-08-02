@@ -1,4 +1,4 @@
-package cn.hugeterry.ployfun.bean;
+package cn.hugeterry.ployfun.model;
 
 /**
  * Created by hugeterry(http://hugeterry.cn)

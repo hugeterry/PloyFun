@@ -1,4 +1,4 @@
-package cn.hugeterry.ployfun.core.DelaunayTriangulation;
+package cn.hugeterry.ployfun.core.delaunay;
 
 /*
  * Copyright (c) 2007 by L. Paul Chew.

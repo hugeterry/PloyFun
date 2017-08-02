@@ -1,4 +1,4 @@
-package cn.hugeterry.ployfun.view;
+package cn.hugeterry.ployfun.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

@@ -16,12 +16,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import cn.hugeterry.ployfun.bean.PointBean;
+import cn.hugeterry.ployfun.model.PointBean;
 import cn.hugeterry.ployfun.PolyfunKey;
-import cn.hugeterry.ployfun.view.MainActivity;
-import cn.hugeterry.ployfun.core.DelaunayTriangulation.Pnt;
-import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangle;
-import cn.hugeterry.ployfun.core.DelaunayTriangulation.Triangulation;
+import cn.hugeterry.ployfun.activity.MainActivity;
+import cn.hugeterry.ployfun.core.delaunay.Pnt;
+import cn.hugeterry.ployfun.core.delaunay.Triangle;
+import cn.hugeterry.ployfun.core.delaunay.Triangulation;
 import cn.hugeterry.ployfun.utils.ConvertGreyImg;
 import cn.hugeterry.ployfun.utils.DrawTriangle;
 
