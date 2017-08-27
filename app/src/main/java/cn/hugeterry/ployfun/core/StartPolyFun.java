@@ -1,5 +1,6 @@
 package cn.hugeterry.ployfun.core;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -50,22 +51,22 @@ public class StartPolyFun extends Thread {
     private ImageView iv;
     private Handler handler;
 
-    public StartPolyFun(Context context, MainActivity activity, ImageView iv) {
+    public StartPolyFun(Context context, ImageView iv) {
         this.context = context;
         this.iv = iv;
-        handler = new PolyHandler(activity);
+        handler = new PolyHandler((Activity) context);
     }
 
     static class PolyHandler extends Handler {
-        WeakReference<MainActivity> mActivityReference;
+        WeakReference<Activity> mActivityReference;
 
-        PolyHandler(MainActivity activity) {
+        PolyHandler(Activity activity) {
             mActivityReference = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            MainActivity activity = mActivityReference.get();
+            MainActivity activity = (MainActivity) mActivityReference.get();
             if (activity != null) {
                 switch (msg.what) {
                     case POLY_START:
