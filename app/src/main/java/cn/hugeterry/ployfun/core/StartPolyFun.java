@@ -39,7 +39,6 @@ public class StartPolyFun extends Thread {
     public long time = System.currentTimeMillis();
 
     private Canvas canvas;
-    private Paint p;
     private static Bitmap bmp;
 
     private int xd, yd;
@@ -168,7 +167,7 @@ public class StartPolyFun extends Thread {
                 cy = yd / 3;
                 rgb = bmp.getPixel(cx, cy);//三角形填充色
                 //绘画图形
-                p = DrawTriangle.drawTriangle(vertices, rgb, canvas, context.getResources());
+                DrawTriangle.drawTriangle(vertices, rgb, canvas, context.getResources());
             }
 
         }
