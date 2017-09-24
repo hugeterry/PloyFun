@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -146,13 +145,15 @@ public class StartPolyFun extends Thread {
         }
 
         Log.i("PolyFun TAG", "开始绘制最终结果");
-        for (Triangle triangle : dt) {//取出所有三角形
+        //取出所有三角形
+        for (Triangle triangle : dt) {
             xd = 0;
             yd = 0;
             Pnt[] vertices = triangle.toArray(new Pnt[0]);//取出三个点
 
             in = 3;
-            for (Pnt pnt : vertices) {//判断三个点都在图片内
+            //判断三个点都在图片内
+            for (Pnt pnt : vertices) {
                 x = (int) pnt.coord(0);
                 y = (int) pnt.coord(1);
                 xd += x;
@@ -161,7 +162,8 @@ public class StartPolyFun extends Thread {
                     in -= 1;
                 }
             }
-            if (in == 3) {//三个点都在图内,才画三角形
+            //三个点都在图内,才画三角形
+            if (in == 3) {
                 //取中点颜色
                 cx = xd / 3;
                 cy = yd / 3;
