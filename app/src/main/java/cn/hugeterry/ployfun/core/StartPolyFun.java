@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -46,12 +45,10 @@ public class StartPolyFun extends Thread {
     private int in = 0;
 
     private Context context;
-    private ImageView iv;
     private Handler handler;
 
-    public StartPolyFun(Context context, ImageView iv) {
+    public StartPolyFun(Context context) {
         this.context = context;
-        this.iv = iv;
         handler = new PolyHandler((Activity) context);
     }
 
@@ -95,18 +92,19 @@ public class StartPolyFun extends Thread {
     @Override
     public void run() {
         handler.sendEmptyMessage(POLY_START);
-        if (iv.isDrawingCacheEnabled()) {
-            iv.destroyDrawingCache();
+
+        if (((MainActivity) context).iv.isDrawingCacheEnabled()) {
+            ((MainActivity) context).iv.destroyDrawingCache();
             Log.i("PolyFun TAG", "destory drawing cache");
         }
-        iv.setDrawingCacheEnabled(true);
+        ((MainActivity) context).iv.setDrawingCacheEnabled(true);
         //这是包围三角形的诞生地...
         Triangle initialTriangle = new Triangle(
                 new Pnt(-PolyfunKey.initialSize, -PolyfunKey.initialSize),
                 new Pnt(PolyfunKey.initialSize, -PolyfunKey.initialSize),
                 new Pnt(0, PolyfunKey.initialSize));
         dt = new Triangulation(initialTriangle);
-        bmp = iv.getDrawingCache();
+        bmp = ((MainActivity) context).iv.getDrawingCache();
         int height = bmp.getHeight();
         int width = bmp.getWidth();
         Log.i("PolyFun TAG", "height:" + height + ",width:" + width);
